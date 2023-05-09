@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const {
   ERROR_CODE_DEFAULT, ERROR_DEFAULT_MESSAGE,
   ERROR_CODE_NOT_FOUND, VALIDATION_ERROR, ERROR_CODE_INVALID,
-  ERROR_VALIDATION_MESSAGE, INVALID_ID_ERROR,
+  ERROR_VALIDATION_MESSAGE, INVALID_ID_ERROR, SUCCESSES_STATUS_CODE,
 } = require('../utils/utils');
 
 const CARD_NOT_FOUND_ERROR_MESSAGE = 'Запрашиваемая карточка не найдена';
@@ -20,7 +20,7 @@ module.exports.createCard = (req, res) => {
     owner: req.user._id,
   };
   Card.create(data)
-    .then((card) => res.status(201).send(card))
+    .then((card) => res.status(SUCCESSES_STATUS_CODE).send(card))
     .catch((err) => {
       if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });

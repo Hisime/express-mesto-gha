@@ -2,7 +2,7 @@ const User = require('../models/user');
 const {
   ERROR_CODE_DEFAULT, ERROR_CODE_NOT_FOUND,
   ERROR_DEFAULT_MESSAGE, ERROR_VALIDATION_MESSAGE, VALIDATION_ERROR,
-  ERROR_CODE_INVALID, INVALID_ID_ERROR,
+  ERROR_CODE_INVALID, INVALID_ID_ERROR, SUCCESSES_STATUS_CODE,
 } = require('../utils/utils');
 
 const USER_NOT_FOUND_ERROR_MESSAGE = 'Запрашиваемый пользователь не найден';
@@ -42,7 +42,7 @@ module.exports.createUser = (req, res) => {
       if (!user) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
       }
-      return res.send(user);
+      return res.status(SUCCESSES_STATUS_CODE).send(user);
     })
     .catch((err) => {
       if (err.name === VALIDATION_ERROR) {
