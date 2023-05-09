@@ -60,6 +60,7 @@ module.exports.updateProfile = (req, res) => {
   };
   User.findByIdAndUpdate(req.user._id, data, {
     new: true,
+    runValidators: true,
   })
     .then((user) => {
       if (!user) {
@@ -82,6 +83,7 @@ module.exports.updateAvatar = (req, res) => {
   };
   User.findByIdAndUpdate(req.user._id, data, {
     new: true,
+    runValidators: true,
   })
     .then((user) => {
       if (!user) {
