@@ -2,7 +2,7 @@ const User = require('../models/user');
 const {
   ERROR_CODE_DEFAULT, ERROR_CODE_NOT_FOUND,
   ERROR_DEFAULT_MESSAGE, ERROR_VALIDATION_MESSAGE, VALIDATION_ERROR,
-  ERROR_CODE_INVALID,
+  ERROR_CODE_INVALID, INVALID_ID_ERROR,
 } = require('../utils/utils');
 
 const USER_NOT_FOUND_ERROR_MESSAGE = 'Запрашиваемый пользователь не найден';
@@ -22,7 +22,13 @@ module.exports.getUserById = (req, res) => {
         res.send(user);
       }
     })
-    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE }));
+    .catch((err) => {
+      if (err.name === INVALID_ID_ERROR) {
+        res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
+      } else {
+        res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
+      }
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -53,7 +59,7 @@ module.exports.updateProfile = (req, res) => {
     about: req.body.about,
   };
   User.findByIdAndUpdate(req.user._id, data, {
-    new: true
+    new: true,
   })
     .then((user) => {
       if (!user) {
@@ -62,7 +68,7 @@ module.exports.updateProfile = (req, res) => {
       return res.send(user);
     })
     .catch((err) => {
-      if (err.name === VALIDATION_ERROR) {
+      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
@@ -84,7 +90,7 @@ module.exports.updateAvatar = (req, res) => {
       return res.send(user);
     })
     .catch((err) => {
-      if (err.name === VALIDATION_ERROR) {
+      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });

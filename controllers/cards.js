@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const {
   ERROR_CODE_DEFAULT, ERROR_DEFAULT_MESSAGE,
   ERROR_CODE_NOT_FOUND, VALIDATION_ERROR, ERROR_CODE_INVALID,
-  ERROR_VALIDATION_MESSAGE,
+  ERROR_VALIDATION_MESSAGE, INVALID_ID_ERROR,
 } = require('../utils/utils');
 
 const CARD_NOT_FOUND_ERROR_MESSAGE = 'Запрашиваемая карточка не найдена';
@@ -22,7 +22,7 @@ module.exports.createCard = (req, res) => {
   Card.create(data)
     .then((card) => res.status(201).send(card))
     .catch((err) => {
-      if (err.name === VALIDATION_ERROR) {
+      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === VALIDATION_ERROR) {
+      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
@@ -61,7 +61,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
     return res.send(card);
   })
   .catch((err) => {
-    if (err.name === VALIDATION_ERROR) {
+    if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
       res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
     } else {
       res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
@@ -80,7 +80,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
     return res.send(card);
   })
   .catch((err) => {
-    if (err.name === VALIDATION_ERROR) {
+    if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
       res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
     } else {
       res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
