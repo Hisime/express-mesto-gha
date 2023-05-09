@@ -18,5 +18,5 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(router);
-app.listen(3000, () => console.log('started'));
+app.listen(3000, () => {});
 app.use('**', (req, res) => res.status(ERROR_CODE_NOT_FOUND).send({ message: 'This is not the web page you are looking for' }));
