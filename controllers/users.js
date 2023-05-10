@@ -60,7 +60,7 @@ module.exports.updateProfile = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      } else if (err.name === INVALID_ID_ERROR) {
+      } else if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
@@ -81,7 +81,7 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      } else if (err.name === INVALID_ID_ERROR) {
+      } else if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
         res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
