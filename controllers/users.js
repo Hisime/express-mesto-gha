@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const {
   ERROR_CODE_DEFAULT, ERROR_CODE_NOT_FOUND,
-  ERROR_DEFAULT_MESSAGE, ERROR_VALIDATION_MESSAGE, VALIDATION_ERROR,
+  ERROR_DEFAULT_MESSAGE, VALIDATION_ERROR,
   ERROR_CODE_INVALID, INVALID_ID_ERROR, SUCCESSES_STATUS_CODE,
 } = require('../utils/utils');
 
@@ -15,16 +15,13 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      } else {
-        res.send(user);
-      }
-    })
+    .orFail(new Error('NotValidId'))
+    .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === INVALID_ID_ERROR) {
-        res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
+      if (err.message === 'NotValidId') {
+        res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
+      } else if (err.name === INVALID_ID_ERROR) {
+        res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
       }
@@ -38,15 +35,10 @@ module.exports.createUser = (req, res) => {
     avatar: req.body.avatar,
   };
   User.create(data)
-    .then((user) => {
-      if (!user) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      }
-      return res.status(SUCCESSES_STATUS_CODE).send(user);
-    })
+    .then((user) => res.status(SUCCESSES_STATUS_CODE).send(user))
     .catch((err) => {
       if (err.name === VALIDATION_ERROR) {
-        res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
+        res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
       }
@@ -62,15 +54,14 @@ module.exports.updateProfile = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .then((user) => {
-      if (!user) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      }
-      return res.send(user);
-    })
+    .orFail(new Error('NotValidId'))
+    .then((user) => res.send(user))
+
     .catch((err) => {
-      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
-        res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
+      if (err.message === 'NotValidId') {
+        res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
+      } else if (err.name === INVALID_ID_ERROR) {
+        res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
       }
@@ -85,15 +76,13 @@ module.exports.updateAvatar = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .then((user) => {
-      if (!user) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
-      }
-      return res.send(user);
-    })
+    .orFail(new Error('NotValidId'))
+    .then((user) => res.send(user))
     .catch((err) => {
-      if ([VALIDATION_ERROR, INVALID_ID_ERROR].includes(err.name)) {
-        res.status(ERROR_CODE_INVALID).send({ message: ERROR_VALIDATION_MESSAGE });
+      if (err.message === 'NotValidId') {
+        res.status(ERROR_CODE_NOT_FOUND).send({ message: USER_NOT_FOUND_ERROR_MESSAGE });
+      } else if (err.name === INVALID_ID_ERROR) {
+        res.status(ERROR_CODE_INVALID).send({ message: err.message });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
       }

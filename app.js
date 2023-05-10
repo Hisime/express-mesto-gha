@@ -1,10 +1,11 @@
+const helmet = require('helmet');
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const router = require('./routes');
 
 const app = express();
-
+app.use(helmet());
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use((req, res, next) => {
@@ -17,4 +18,4 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(router);
-app.listen(3000, () => {});
+app.listen(3000, () => console.log('server started'));
