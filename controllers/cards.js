@@ -17,7 +17,7 @@ module.exports.createCard = (req, res) => {
   const data = {
     name: req.body.name,
     link: req.body.link,
-    owner: req.user._id,
+    owner: req.user.id,
   };
   Card.create(data)
     .then((card) => res.status(SUCCESSES_STATUS_CODE).send(card))
@@ -32,14 +32,25 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  const userId = req.user.id;
+  Card.findById(cardId)
+    .populate('owner')
     .orFail(new Error('NotValidId'))
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (userId === card.owner.id) {
+        Card.findByIdAndRemove(cardId)
+          .then((removedCard) => res.send(removedCard));
+      } else {
+        throw new Error('CardOwnerError');
+      }
+    })
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: CARD_NOT_FOUND_ERROR_MESSAGE });
       } else if (err.name === INVALID_ID_ERROR) {
         res.status(ERROR_CODE_INVALID).send({ message: err.message });
+      } else if (err.message === 'CardOwnerError') {
+        res.status(403).send({ message: 'Удаление чужой карточки недоступно' });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_DEFAULT_MESSAGE });
       }

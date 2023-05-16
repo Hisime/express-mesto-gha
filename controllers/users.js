@@ -103,7 +103,7 @@ module.exports.registerUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).send({ message: 'Email или пароль не могут быть пустыми' });
-  return User.findOne({ email })
+  return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) return res.status.status(401).send({ message: 'Неправильная почта или пароль' });
       return bcrypt.compare(password, user.password)

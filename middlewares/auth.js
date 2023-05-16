@@ -3,7 +3,7 @@ const { JWT_SECRET } = require('../utils/utils');
 
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
-  if (!authorization || !authorization.startWith('Bearer ')) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     return res
       .status(401)
       .send({ message: 'Необходима авторизация' });
