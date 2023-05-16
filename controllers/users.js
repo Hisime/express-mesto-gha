@@ -1,13 +1,13 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {
   ERROR_CODE_DEFAULT, ERROR_CODE_NOT_FOUND,
   ERROR_DEFAULT_MESSAGE, VALIDATION_ERROR,
-  ERROR_CODE_INVALID, INVALID_ID_ERROR, SUCCESSES_STATUS_CODE,
+  ERROR_CODE_INVALID, INVALID_ID_ERROR,
 } = require('../utils/utils');
 
 const USER_NOT_FOUND_ERROR_MESSAGE = 'Запрашиваемый пользователь не найден';
 const SALT_ROUNDS = 10;
-const bcrypt = require('bcryptjs');
 const { getJwtToken } = require('../utils/jwt');
 
 module.exports.getUsers = (req, res) => {
@@ -103,7 +103,7 @@ module.exports.registerUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).send({ message: 'Email или пароль не могут быть пустыми' });
-  User.findOne({ email })
+  return User.findOne({ email })
     .then((user) => {
       if (!user) return res.status.status(401).send({ message: 'Неправильная почта или пароль' });
       return bcrypt.compare(password, user.password)

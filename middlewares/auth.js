@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../utils/utils');
 
 module.exports = async (req, res, next) => {
@@ -19,5 +20,5 @@ module.exports = async (req, res, next) => {
 
   req.user = payload;
 
-  next();
+  return next();
 };
