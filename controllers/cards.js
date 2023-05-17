@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 const {
-  ERROR_CODE_DEFAULT, ERROR_DEFAULT_MESSAGE,
-  ERROR_CODE_NOT_FOUND, VALIDATION_ERROR, ERROR_CODE_INVALID,
+  VALIDATION_ERROR,
   INVALID_ID_ERROR, SUCCESSES_STATUS_CODE,
 } = require('../utils/utils');
 const BadRequestError = require('../errors/bad-request-err');

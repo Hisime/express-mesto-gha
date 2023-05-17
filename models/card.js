@@ -15,6 +15,7 @@ const cardSchema = new mongoose.Schema({
       validator: (v) => validator.isURL(v),
       message: 'Некорректный URL',
     },
+    pattern: [/^https?:\/\/(?:www\.)?[a-zA-Z0-9а-яА-Я-._~:/?#[\]@!$&'()*+,;=]+/im, 'Некорректный URL'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

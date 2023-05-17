@@ -1,4 +1,4 @@
-import { ERROR_CODE_CONFLICT } from '../utils/utils';
+const { ERROR_CODE_CONFLICT } = require('../utils/utils');
 
 module.exports = class ConflictError extends Error {
   constructor(message) {
