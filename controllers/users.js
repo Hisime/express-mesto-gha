@@ -34,21 +34,6 @@ module.exports.getUser = (req, res, next) => {
     });
 };
 
-module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail(new Error('NotValidId'))
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.message === 'NotValidId') {
-        next(new NotFoundError(USER_NOT_FOUND_ERROR_MESSAGE));
-      } else if (err.name === INVALID_ID_ERROR) {
-        next(new BadRequestError(err.message));
-      } else {
-        next(err);
-      }
-    });
-};
-
 module.exports.updateProfile = (req, res, next) => {
   const data = {
     name: req.body.name,
@@ -100,11 +85,9 @@ module.exports.registerUser = (req, res, next) => {
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
-    }))
-    .then((user) => {
-      user.password = null;
+    }).then((user) => {
       res.status(201).send(user);
-    })
+    }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Такой пользователь уже существует'));
