@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const router = require('./routes');
 const { login, registerUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const errors = require('./middlewares/errors');
 
 const app = express();
 app.use(helmet());
@@ -16,4 +17,5 @@ app.post('/signin', login);
 app.post('/signup', registerUser);
 app.use(auth);
 app.use(router);
+app.use(errors);
 app.listen(3000, () => console.log('server started'));
