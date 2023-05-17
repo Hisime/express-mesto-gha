@@ -19,6 +19,21 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.user.id)
+    .orFail(new Error('NotValidId'))
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.message === 'NotValidId') {
+        next(new NotFoundError(USER_NOT_FOUND_ERROR_MESSAGE));
+      } else if (err.name === INVALID_ID_ERROR) {
+        next(new BadRequestError(err.message));
+      } else {
+        next(err);
+      }
+    });
+};
+
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new Error('NotValidId'))
@@ -86,7 +101,7 @@ module.exports.registerUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then(() => res.status(201).send({ message: `Пользователь ${email} успешно создан!` }))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Такой пользователь уже существует'));
@@ -110,7 +125,8 @@ module.exports.login = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 604800,
             httpOnly: true,
-          }).end();
+          });
+          res.send({ token });
         });
     })
     .catch(next);
