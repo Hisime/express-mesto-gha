@@ -20,11 +20,7 @@ router.patch('/users/me', celebrate({
   }),
 }), updateProfile);
 
-router.get('/users/me', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
-  }),
-}), getUser);
+router.get('/users/me', getUser);
 
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({

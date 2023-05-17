@@ -16,13 +16,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+    email: Joi.string().required().pattern(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/),
     password: Joi.string().required(),
   }),
 }), login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+    email: Joi.string().required().pattern(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/),
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),

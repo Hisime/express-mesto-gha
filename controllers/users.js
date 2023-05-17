@@ -54,7 +54,7 @@ module.exports.updateProfile = (req, res, next) => {
     name: req.body.name,
     about: req.body.about,
   };
-  User.findByIdAndUpdate(req.user._id, data, {
+  User.findByIdAndUpdate(req.user.id, data, {
     new: true,
     runValidators: true,
   })
@@ -76,7 +76,7 @@ module.exports.updateAvatar = (req, res, next) => {
   const data = {
     avatar: req.body.avatar,
   };
-  User.findByIdAndUpdate(req.user._id, data, {
+  User.findByIdAndUpdate(req.user.id, data, {
     new: true,
     runValidators: true,
   })
@@ -101,7 +101,10 @@ module.exports.registerUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(201).send(user))
+    .then((user) => {
+      user.password = null;
+      res.status(201).send(user);
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Такой пользователь уже существует'));
