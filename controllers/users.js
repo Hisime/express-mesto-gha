@@ -103,11 +103,14 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) throw new AuthError('Неправильная почта или пароль');
-      return bcrypt.compare(password, user.password)
+      bcrypt.compare(password, user.password)
         .then((isValidPassword) => {
-          if (!isValidPassword) throw new AuthError('Неправильная почта или пароль');
+          if (!isValidPassword) throw new BadRequestError('Неправильная почта или пароль');
           const token = getJwtToken(user._id);
-          return res.send({ token });
+          res.cookie('jwt', token, {
+            maxAge: 604800,
+            httpOnly: true,
+          }).end();
         });
     })
     .catch(next);
