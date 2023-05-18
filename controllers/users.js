@@ -121,13 +121,13 @@ module.exports.login = (req, res, next) => {
       if (!user) throw new AuthError('Неправильная почта или пароль');
       bcrypt.compare(password, user.password)
         .then((isValidPassword) => {
-          if (!isValidPassword) throw new BadRequestError('Неправильная почта или пароль');
+          if (!isValidPassword) return next(new BadRequestError('Неправильная почта или пароль'));
           const token = getJwtToken(user._id);
           res.cookie('jwt', token, {
             maxAge: 604800,
             httpOnly: true,
           });
-          res.send({ token });
+          return res.send({ token });
         });
     })
     .catch(next);
