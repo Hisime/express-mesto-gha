@@ -17,7 +17,7 @@ const limiter = rateLimit({
 
 const app = express();
 app.use(helmet());
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://0.0.0.0:27017/mestodb');
 app.use(limiter);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
